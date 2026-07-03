@@ -1,5 +1,6 @@
 import { Document, model, Schema } from "mongoose";
 import validator from 'validator'
+import bcrypt from 'bcrypt'
 
 type RoleType = 'creator' | 'backer';
 
@@ -37,5 +38,12 @@ const UserSchema = new Schema<UserDocumentInterface>({
         enum: ['creator', 'backer']
     },
 });
+
+
+UserSchema.pre('save', async function (this: UserDocumentInterface) {
+    if (!this.isModified('password')) return;
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+})
 
 export const User = model<UserDocumentInterface>('User', UserSchema);

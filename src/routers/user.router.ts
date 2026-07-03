@@ -1,8 +1,7 @@
 import '../db/mongoose.js'
 import express  from 'express'
 import { User } from '../models/user.model.js';
-import { Project } from '../models/project.model.js';
-import { updateCreatorProjectsStatus } from '../services/user.service.js';
+import { updateCreatorProjectsStatus } from '../services/project.service.js';
 
 export const UserRouter = express.Router();
 
@@ -66,7 +65,7 @@ UserRouter.patch('/api/users/:email', async (req, res) => {
         if (!user) return res.status(404).send({ error: 'User not founded' });
 
         actualUpdates.forEach((update) => {
-            (user as any).update = req.body.update;
+            (user as any)[update] = req.body[update];
         });
         await user.save(); 
 
