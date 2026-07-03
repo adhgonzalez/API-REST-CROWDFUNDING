@@ -5,9 +5,10 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "tsc-watch --onSuccess \"node dist/index.js\"",
+    "dev": "tsc-watch --onSuccess \"env-cmd -f ./config/dev.env node dist/index.js\"",
     "doc": "typedoc",
-    "test": "vitest run",
-    "coverage": "vitest run --coverage --coverage.include \"src/**/*.ts\""
+    "test": "env-cmd -f ./config/test.env vitest run --fileParallelism=false",
+    "coverage": "env-cmd -f ./config/test.env vitest run --fileParallelism=false --coverage --coverage.include \"src/**/*.ts\" --coverage.exclude \"src/index.ts\""
   },
   "keywords": [],
   "author": "",
@@ -15,6 +16,7 @@
   "type": "module",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/express": "^5.0.6",
     "@types/mongoose": "^5.11.96",
     "@types/validator": "^13.15.10",
     "@typescript-eslint/eslint-plugin": "^8.56.0",
@@ -32,6 +34,7 @@
     "vitest": "^4.0.18"
   },
   "dependencies": {
+    "express": "^5.2.1",
     "mongoose": "^9.7.3",
     "validator": "^13.15.35"
   }

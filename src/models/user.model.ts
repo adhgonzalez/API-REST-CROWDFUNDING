@@ -1,4 +1,4 @@
-import { Document, connect, model, Schema } from "mongoose";
+import { Document, model, Schema } from "mongoose";
 import validator from 'validator'
 
 type RoleType = 'creator' | 'backer';
