@@ -1,8 +1,8 @@
 import { Document, Schema, Types, model,  } from "mongoose";
 
-type StatusType = 'active' | 'funded' | 'failed';
+type StatusType = 'active' | 'funded' | 'failed' | 'cancelled';
 
-interface ProjectDocumentInterface extends Document {
+export interface ProjectDocumentInterface extends Document {
     title: string,
     description: string,
     creatorId: Types.ObjectId,
@@ -52,7 +52,7 @@ const ProjectSchema = new Schema<ProjectDocumentInterface>({
         type: String,
         required: true,
         trim: true,
-        enum: ['active', 'funded', 'failed']
+        enum: ['active', 'funded', 'failed', 'cancelled']
     }
 });
 
