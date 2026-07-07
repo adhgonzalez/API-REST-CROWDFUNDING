@@ -1,5 +1,6 @@
 // src/routers/user.router.test.ts
 import { describe, test, beforeAll, beforeEach, expect } from 'vitest';
+import "../src/db/mongoose.js"
 import request from 'supertest';
 import { app } from '../src/app.js';
 import { User } from '../src/models/user.model.js';
@@ -31,9 +32,11 @@ beforeEach(async () => {
 
 describe('POST /api/users', () => {
     test('crea un usuario y devuelve 201', async () => {
-        const res = await request(app).post('/api/users').send(validUser);
+        const res = await request(app)
+                    .post('/api/users')
+                    .send(validUser)
+                    .expect(201)
 
-        expect(res.status).toBe(201);
         expect(res.body.email).toBe(validUser.email);
         expect(res.body.name).toBe(validUser.name);
     });
@@ -89,7 +92,8 @@ describe('GET /api/users', () => {
 
 describe('GET /api/users/:email', () => {
     test('devuelve el usuario si existe', async () => {
-        await User.create(validUser);
+        const user = new User(validUser);
+        await user.save();
 
         const res = await request(app).get(`/api/users/${validUser.email}`);
 
@@ -106,7 +110,8 @@ describe('GET /api/users/:email', () => {
 
 describe('PATCH /api/users/:email', () => {
     test('actualiza campos permitidos y devuelve 200', async () => {
-        await User.create(validUser);
+        const user = new User(validUser);
+        await user.save();
 
         const res = await request(app)
             .patch(`/api/users/${validUser.email}`)
@@ -117,7 +122,8 @@ describe('PATCH /api/users/:email', () => {
     });
 
     test('rehashea el password si se actualiza', async () => {
-        await User.create(validUser);
+        const user = new User(validUser);
+        await user.save();
 
         await request(app)
             .patch(`/api/users/${validUser.email}`)
@@ -128,7 +134,8 @@ describe('PATCH /api/users/:email', () => {
     });
 
     test('devuelve 400 si se intenta actualizar un campo no permitido', async () => {
-        await User.create(validUser);
+        const user = new User(validUser);
+        await user.save();
 
         const res = await request(app)
             .patch(`/api/users/${validUser.email}`)
@@ -148,7 +155,8 @@ describe('PATCH /api/users/:email', () => {
 
 describe('DELETE /api/users/:email', () => {
     test('borra un usuario normal (no creator) y devuelve 200', async () => {
-        await User.create(validUser);
+        const user = new User(validUser);
+        await user.save();
 
         const res = await request(app).delete(`/api/users/${validUser.email}`);
 
@@ -160,10 +168,12 @@ describe('DELETE /api/users/:email', () => {
     });
 
     test('si el usuario es creator, cancela sus proyectos reales y lo borra', async () => {
-        const creator = await User.create(validCreator);
+        const creator = new User(validCreator);
+        await creator.save();
+
         await Project.create([
-            { creatorId: creator._id.toString(), status: 'active', /* resto de campos requeridos por tu schema */ },
-            { creatorId: creator._id.toString(), status: 'funded', /* resto de campos requeridos por tu schema */ }
+            { creatorId: creator._id, status: 'active', description: 'hola', title: 'P1', goalAmount: 3, currentAmount: 1, deadline: '2030-03-20' },
+            { creatorId: creator._id, status: 'funded', description: 'hola2', title: 'P2', goalAmount: 3, currentAmount: 1, deadline: '2030-03-20' }
         ]);
 
         const res = await request(app).delete(`/api/users/${validCreator.email}`);

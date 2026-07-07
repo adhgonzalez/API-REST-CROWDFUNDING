@@ -1,4 +1,3 @@
-import '../db/mongoose.js'
 import express  from 'express'
 import { User } from '../models/user.model.js';
 import { updateCreatorProjectsStatus } from '../services/project.service.js';
