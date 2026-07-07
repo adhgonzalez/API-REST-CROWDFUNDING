@@ -72,7 +72,6 @@ UserRouter.patch('/api/users/:email', async (req, res) => {
     } catch(err) {
         res.status(500).send(err);    
     }
-
 });
 
 UserRouter.delete('/api/users/:email', async (req, res) => {
