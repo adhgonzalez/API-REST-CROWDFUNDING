@@ -341,7 +341,7 @@ describe('DELETE /api/projects/:id - Borrado / Cancelación de Proyectos', () =>
     expect(res.status).toBe(200);
     expect(res.body.message).toBe('Project deleted');
 
-    // Verificación crucial: Buscamos en la BD y debe ser null (ya no existe)
+    // Buscamos en la BD y debe ser null (ya no existe)
     const deletedInDb = await Project.findById(emptyProject._id);
     expect(deletedInDb).toBeNull();
   });
@@ -365,5 +365,10 @@ describe('DELETE /api/projects/:id - Borrado / Cancelación de Proyectos', () =>
 
     expect(res.status).toBe(404);
     expect(res.body.error).toBe('Project not found');
+  });
+
+  test('devuelve 500 si el ID tiene formato inválido', async () => {
+    const res = await request(app).delete('/api/projects/id-invalido-500');
+    expect(res.status).toBe(500);
   });
 });
